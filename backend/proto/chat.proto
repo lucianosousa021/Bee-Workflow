@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package chat;
+option go_package = "openai_connect/pb";
+
+service ChatService {
+  rpc SendMessage (ChatRequest) returns (ChatResponse) {}
+  rpc ChatStream (ChatRequest) returns (stream ChatResponse) {}
+}
+
+message ChatRequest {
+  string user_id = 1;
+  string message = 2;
+}
+
+message ChatResponse {
+  string message = 1;
+  string user_id = 2;
+  string timestamp = 3;
+} 
