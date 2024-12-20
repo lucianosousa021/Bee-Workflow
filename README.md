@@ -93,4 +93,3 @@ Este projeto está licenciado sob a MIT. Veja o arquivo `LICENSE` para mais deta
 Para mais informações, entre em contato:
 - **Email**: [021lucianosousa@gmail.com](mailto:021lucianosousa@gmail.com)
 - **GitHub**: [github.com/lucianosousa021](https://github.com/lucianosousa021)
-
