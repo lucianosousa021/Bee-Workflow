@@ -2,6 +2,6 @@
 .env
 
 # pastas
-z-api/
-openai_connect/
+*/z-api
+*/openai_connect
 
