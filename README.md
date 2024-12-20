@@ -51,7 +51,7 @@ Contribuições são bem-vindas! Aqui está como você pode ajudar:
    git clone https://github.com/lucianosousa021/Bee-Workflow.git
    ```
 
-2. Configure as variáveis de ambiente:
+2. Crie um arquivo .env com as seguintes variáveis (Não obrigatório ainda):
    ```bash
    OPENAI_API_KEY={SUA_CHAVE_OPENAI}
    ZAPI_USER_INSTANCE={SUA_USER_INSTANCE}
