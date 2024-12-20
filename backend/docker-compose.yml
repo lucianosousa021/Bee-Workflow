@@ -18,6 +18,30 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+  
+  meeting:
+    build:
+      context: ./meeting
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  zapi:
+    build:
+      context: ./z-api
+      dockerfile: Dockerfile
+    environment:
+      - ZAPI_USER_INSTANCE=${ZAPI_USER_INSTANCE}
+      - ZAPI_USER_TOKEN=${ZAPI_USER_TOKEN}
+      - ZAPI_ACCOUNT_TOKEN=${ZAPI_ACCOUNT_TOKEN}
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   redis:
     image: redis:alpine
