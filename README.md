@@ -51,14 +51,7 @@ Contribuições são bem-vindas! Aqui está como você pode ajudar:
    git clone https://github.com/lucianosousa021/Bee-Workflow.git
    ```
 
-2. Instale as dependências do frontend:
-   ```bash
-   cd frontend/app
-
-   npm install
-   ```
-
-3. Configure as variáveis de ambiente:
+2. Configure as variáveis de ambiente:
    ```bash
    OPENAI_API_KEY={SUA_CHAVE_OPENAI}
    ZAPI_USER_INSTANCE={SUA_USER_INSTANCE}
@@ -66,11 +59,11 @@ Contribuições são bem-vindas! Aqui está como você pode ajudar:
    ZAPI_ACCOUNT_TOKEN=={SUA_ACCOUNT_TOKEN}
    ```
 
-4. Inicie o backend:
+3. Inicie o projeto:
    ```bash
-   cd backend
+   docker-compose up --build
 
-   
+
    ```
 
 ---
