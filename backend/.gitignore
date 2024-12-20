@@ -1,10 +1,8 @@
 #arquivos de ambiente
 .env
 
-#arquivos de configuração
-
-#arquivos de log
-
-#arquivos de teste
+# pastas
+/z-api
+/openai_connect
 
 
