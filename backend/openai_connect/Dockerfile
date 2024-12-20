@@ -15,7 +15,7 @@ RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
 COPY go.mod go.sum ./
 
 # Baixar dependências
-RUN go mod download
+RUN go mod tidy
 
 # Copiar código fonte e proto
 COPY . .
@@ -29,7 +29,5 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/main .
-
-EXPOSE 50051
 
 CMD ["./main"]

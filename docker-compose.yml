@@ -1,0 +1,41 @@
+services:
+  # Serviços do Backend  
+  meeting:
+    build:
+      context: ./backend/meeting
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - beeflow-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - beeflow-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://meeting:8080
+      - NEXT_PUBLIC_WEBSOCKET_URL=ws://meeting:8080/ws
+    depends_on:
+      - meeting
+    networks:
+      - beeflow-network
+
+networks:
+  beeflow-network:
+    driver: bridge
+
+volumes:
+  redis_data: 

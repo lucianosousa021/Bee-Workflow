@@ -28,8 +28,8 @@ export default function Home() {
     const [devices, setDevices] = useState<Devices>({ audio: [], video: [], mic: [] });
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const streamRef = useRef<MediaStream | null>(null);
-    let videoSender: RTCRtpSender | null = null;
-    let peerConnection: RTCPeerConnection | null = null;
+    const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+    const videoSenderRef = useRef<RTCRtpSender | null>(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
     useEffect(() => {
@@ -49,13 +49,13 @@ export default function Home() {
         };
         initMedia();
 
-        // Inicialize a conexão WebRTC
-        peerConnection = new RTCPeerConnection();
+        // Inicializar a conexão WebRTC usando ref
+        peerConnectionRef.current = new RTCPeerConnection();
 
         return () => {
             streamRef.current?.getTracks().forEach(track => track.stop());
-            peerConnection?.close();
-            peerConnection = null;
+            peerConnectionRef.current?.close();
+            peerConnectionRef.current = null;
         };
     }, []);
 
@@ -75,19 +75,15 @@ export default function Home() {
         }
     };
 
-    const addVideoTrackToConnection = (track: MediaStreamTrack) => {
-        if (peerConnection && streamRef.current) {
-            videoSender = peerConnection.addTrack(track, streamRef.current);
-        }
-    };
-
     const shareScreen = async () => {
         if (!isScreenSharing && streamRef.current) {
             const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
             const videoTrack = screenStream.getVideoTracks()[0];
 
-            if (videoSender) {
-                await videoSender.replaceTrack(videoTrack);
+            if (videoSenderRef.current) {
+                await videoSenderRef.current.replaceTrack(videoTrack);
+            } else if (peerConnectionRef.current && streamRef.current) {
+                videoSenderRef.current = peerConnectionRef.current.addTrack(videoTrack, streamRef.current);
             }
 
             videoTrack.onended = () => stopScreenSharing();
