@@ -1,64 +1,58 @@
 package handler
 
 import (
-	"fmt"
 	"log"
-	"meeting/model"
 	"net/http"
-	"sync"
-
-	"github.com/gorilla/websocket"
-)
-
-var (
-	clients = make(map[*websocket.Conn]bool)
-	mutex   = sync.RWMutex{}
 )
 
 func (h *Handler) HandleConnections(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Nova conexão recebida de: %s", r.RemoteAddr)
-
-	ws, err := h.Upgrader.Upgrade(w, r, nil)
+	// Upgrade para WebSocket
+	conn, err := h.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Erro no upgrade: %v", err)
+		log.Println(err)
 		return
 	}
-	defer ws.Close()
+	defer conn.Close()
 
-	mutex.Lock()
-	clients[ws] = true
-	mutex.Unlock()
+	// Identificação do cliente
+	clientID := r.URL.Query().Get("id")
+	roomID := r.URL.Query().Get("room")
 
-	log.Printf("Cliente conectado: %s", ws.RemoteAddr())
+	client := &Client{
+		ID:   clientID,
+		Conn: conn,
+		Room: roomID,
+	}
+	h.Clients[clientID] = client
+
+	log.Printf("Client %s connected to room %s", clientID, roomID)
 
 	for {
-		log.Printf("Aguardando mensagem do cliente...")
-		messageType, message, err := ws.ReadMessage()
+		var msg Message
+		err := conn.ReadJSON(&msg)
 		if err != nil {
-			log.Printf("Erro ao ler mensagem: %v", err)
-			mutex.Lock()
-			delete(clients, ws)
-			mutex.Unlock()
+			log.Printf("Client %s disconnected", clientID)
+			delete(h.Clients, clientID)
 			break
 		}
+		// Encaminha a mensagem para o canal broadcast
+		h.Broadcast <- msg
+	}
+}
 
-		log.Printf("Mensagem recebida - Tipo: %d, Tamanho: %d bytes", messageType, len(message))
-
-		if messageType == websocket.BinaryMessage {
-			// log.Printf("Tipo da mensagem recebida: %d", messageType)
-			// log.Printf("Recebido frame de vídeo de tamanho: %d bytes", len(message))
-			// log.Printf("Primeiros 50 bytes do frame: %v", message[:min(50, len(message))])
-
-			response := model.VideoMessage{
-				Type: "processing_status",
-				Data: fmt.Sprintf("Frame processado com sucesso. Tamanho: %d bytes", len(message)),
+func (h *Handler) HandleMessages() {
+	for {
+		msg := <-h.Broadcast
+		// Enviar mensagem para todos os clientes na mesma sala
+		for _, client := range h.Clients {
+			if client.Room == msg.Room && client.ID != msg.Sender {
+				err := client.Conn.WriteJSON(msg)
+				if err != nil {
+					log.Printf("Erro ao enviar mensagem para %s: %v", client.ID, err)
+					client.Conn.Close()
+					delete(h.Clients, client.ID)
+				}
 			}
-
-			if err := ws.WriteJSON(response); err != nil {
-				log.Printf("Erro ao enviar confirmação: %v", err)
-			}
-		} else {
-			log.Printf("Mensagem recebida de tipo diferente: %d", messageType)
 		}
 	}
 }

@@ -62,8 +62,6 @@ Contribuições são bem-vindas! Aqui está como você pode ajudar:
 3. Inicie o projeto:
    ```bash
    docker-compose up --build
-
-
    ```
 
 ---

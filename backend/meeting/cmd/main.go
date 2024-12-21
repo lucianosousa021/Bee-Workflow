@@ -6,21 +6,11 @@ import (
 	"net/http"
 )
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func main() {
 	handler := handler.NewHandler()
-
 	http.HandleFunc("/ws", handler.HandleConnections)
+	go handler.HandleMessages()
 
-	port := ":8080"
-	log.Printf("Servidor iniciado em http://localhost%s", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
-		log.Fatal(err)
-	}
+	log.Println("Servidor iniciado na porta :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
