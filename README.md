@@ -26,9 +26,8 @@ Este projeto tem como objetivo criar uma ferramenta open source voltada para emp
 
 ## Tecnologias Utilizadas
 - **Linguagens**: [Golang, Python, JavaScript, TypeScript]
-- **Frameworks**: [NextJS, Fiber, Gorilla]
 - **Infraestrutura**: [Docker]
-- **Integrações**: [Z-API]
+- **Integrações**: [Z-API, OpenAI]
 
 
 ---
@@ -59,7 +58,12 @@ Contribuições são bem-vindas! Aqui está como você pode ajudar:
    ZAPI_ACCOUNT_TOKEN=={SUA_ACCOUNT_TOKEN}
    ```
 
-3. Inicie o projeto:
+3. Em backend/coturn/turnserver.conf, defina as credenciais do servidor TURN:
+   ```bash
+   static-auth-secret=SUA_CHAVE_TURN
+   ```
+
+4. Inicie o projeto:
    ```bash
    docker-compose up --build
    ```
