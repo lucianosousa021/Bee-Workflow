@@ -1,29 +1,20 @@
 // pages/index.js
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { 
-    Video, 
-    VideoOff, 
-    Mic, 
-    MicOff, 
-    Monitor, 
-    Settings, 
-    LogOut, 
-    LayoutGrid 
-} from 'lucide-react';
 import Link from 'next/link';
-type Devices = {
-    audio: MediaDeviceInfo[];
-    video: MediaDeviceInfo[];
-    mic: MediaDeviceInfo[];
-};
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+    const router = useRouter();
+
+    useEffect(() => {
+        router.push('/create-meeting');
+    }, [router]);
+
     return (
         <div>
-            <Link href="/meeting">Ir para /meeting</Link>
+            <Link href="/create-meeting">Ir para /create-meeting</Link>
         </div>
     );
 }
